@@ -149,14 +149,19 @@ get_user_by_name(Name) ->
 
 create_user(Config, {_Name, UserSpec}) ->
     Options0 = get_options(Config, UserSpec),
-    {ok, Conn, Options1} = escalus_connection:connect(Options0),
-    escalus_session:start_stream(Conn, Options1),
-    escalus_connection:send(Conn, escalus_stanza:get_registration_fields()),
-    {ok, result, RegisterInstrs} = wait_for_result(Conn),
+    {ok, Conn0, Options1} = escalus_connection:connect(Options0),
+    {_, Features} = escalus_session:start_stream(Conn0, Options1),
+    {Conn1, Options2} = case escalus_session:use_ssl(Options1, Features) of
+                                      true ->
+                                          escalus_session:starttls(Conn0, Options0);
+                                      false -> {Conn0, Options0}
+                                  end,
+    escalus_connection:send(Conn1, escalus_stanza:get_registration_fields()),
+    {ok, result, RegisterInstrs} = wait_for_result(Conn1),
     Answers = get_answers(Options1, RegisterInstrs),
-    escalus_connection:send(Conn, escalus_stanza:register_account(Answers)),
-    Result = wait_for_result(Conn),
-    escalus_connection:stop(Conn),
+    escalus_connection:send(Conn1, escalus_stanza:register_account(Answers)),
+    Result = wait_for_result(Conn1),
+    escalus_connection:stop(Conn1),
     Result.
 
 verify_creation({ok, result, _}) ->
