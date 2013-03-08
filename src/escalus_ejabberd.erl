@@ -15,7 +15,7 @@
 %%==============================================================================
 
 %% Note: This module requires ejabberd_node and ejabberd_cookie
-%%       to be set if common test configuration file
+%%       to be set in common test configuration file
 
 -module(escalus_ejabberd).
 
