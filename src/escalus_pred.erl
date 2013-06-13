@@ -140,6 +140,10 @@ is_iq_get(Stanza) -> is_iq(<<"get">>, Stanza).
 is_iq_error(Stanza) -> is_iq(<<"error">>, Stanza).
 is_iq_result(Stanza) -> is_iq(<<"result">>, Stanza).
 
+is_presence_with_show(undefined, Presence) ->
+    is_presence(Presence)
+    andalso
+    undefined == exml_query:path(Presence, [{element, <<"show">>}, cdata]);
 is_presence_with_show(Show, Presence) ->
     is_presence(Presence)
     andalso
