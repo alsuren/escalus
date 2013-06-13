@@ -58,7 +58,7 @@ add_client(Config, Client) ->
     gen_server:cast(get_cleaner(Config), {add_client, Client}).
 
 clean(Config) ->
-    gen_server:call(get_cleaner(Config), clean).
+    gen_server:call(get_cleaner(Config), clean, 100000).
 
 stop(Config) ->
     gen_server:cast(get_cleaner(Config), stop).
