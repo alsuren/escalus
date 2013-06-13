@@ -18,6 +18,7 @@
 
 % Public API
 -export([story/3,
+         variable_arity_story/3,
          make_everyone_friends/1,
          make_everyone_friends/2,
          start_ready_clients/2,
@@ -30,16 +31,20 @@
 %% Public API
 %%--------------------------------------------------------------------
 
-story(Config, ResourceCounts, Story) ->
+variable_arity_story(Config, ResourceCounts, Story) ->
     ClientDescs = clients_from_resource_counts(Config, ResourceCounts),
     try
         Clients = start_clients(Config, ClientDescs),
         ensure_all_clean(Clients),
-        apply(Story, Clients),
+        Story(Clients),
         post_story_checks(Config, Clients)
     after
         escalus_cleaner:clean(Config)
     end.
+
+story(Config, ResourceCounts, Story) ->
+    variable_arity_story(Config, ResourceCounts,
+                         fun(Clients) -> apply(Story, Clients) end).
 
 make_everyone_friends(Config) ->
     Users = escalus_config:get_config(escalus_users, Config),

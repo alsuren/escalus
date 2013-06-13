@@ -26,6 +26,7 @@
          delete_users/1,
          override/3,
          make_everyone_friends/1,
+         variable_arity_story/3,
          story/3,
          assert/2,
          assert/3,
@@ -71,6 +72,7 @@ end_per_testcase(_CaseName, Config) ->
 
 ?FORWARD1(escalus_story, make_everyone_friends).
 ?FORWARD3(escalus_story, story).
+?FORWARD3(escalus_story, variable_arity_story).
 
 ?FORWARD2(escalus_new_assert, assert).
 ?FORWARD3(escalus_new_assert, assert).
